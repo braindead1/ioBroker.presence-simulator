@@ -1,0 +1,93 @@
+{
+    "common": {
+        "name": "presence-simulator",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "zh-cn": "首次出版"
+            }
+        },
+        "title": "Presence Simulator",
+        "titleLang": {
+            "en": "Presence Simulator",
+            "de": "Anwesenheitssimulator",
+            "ru": "Симулятор присутствия",
+            "pt": "Simulador de presença",
+            "nl": "Aanwezigheidssimulator",
+            "fr": "Simulateur de présence",
+            "it": "Simulatore di presenza",
+            "es": "Simulador de presencia",
+            "pl": "Symulator obecności",
+            "zh-cn": "现场模拟器"
+        },
+        "desc": {
+            "en": "Anwesenheitssimulation",
+            "de": "Anwesenheitssimulation",
+            "ru": "Anwesenheitssimulation",
+            "pt": "Simulação",
+            "nl": "Anwesenheitssimulation",
+            "fr": "Anwesenheitssimulation",
+            "it": "Anwesenheitssimulation",
+            "es": "Anwesenheitssimulation",
+            "pl": "Anwesenheitssimulation",
+            "zh-cn": "模拟结果"
+        },
+        "authors": [
+            "braindead1"
+        ],
+        "keywords": [
+            "template"
+        ],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "main.js",
+        "icon": "presence-simulator.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/braindead1/ioBroker.presence-simulator/master/admin/presence-simulator.png",
+        "readme": "https://github.com/braindead1/ioBroker.presence-simulator/blob/master/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "alarm",
+        "compact": true,
+        "materialize": true,
+        "materializeTab": true,
+        "adminTab": {
+            "singleton": true,
+            "name": {
+                "en": "Presence Simulator",
+                "de": "Anwesenheitssimulator",
+                "ru": "Симулятор присутствия",
+                "pt": "Simulador de presença",
+                "nl": "Aanwezigheidssimulator",
+                "fr": "Simulateur de présence",
+                "it": "Simulatore di presenza",
+                "es": "Simulador de presencia",
+                "pl": "Symulator obecności",
+                "zh-cn": "现场模拟器"
+            },
+            "link": "",
+            "fa-icon": "info"
+        },
+        "supportCustoms": true,
+        "dependencies": [
+            {
+                "js-controller": ">=1.4.2"
+            }
+        ]
+    },
+    "native": {
+        "option1": true,
+        "option2": "42"
+    },
+    "objects": [],
+    "instanceObjects": []
+}
