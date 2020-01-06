@@ -33,9 +33,7 @@ class PresenceSimulator extends utils.Adapter {
      */
     async onReady() {
         // Initialize your adapter here
-
-        // in this template all states changes inside the adapters namespace are subscribed
-        this.subscribeStates('*');
+        await this.initializeObjects();
     }
 
     /**
@@ -79,6 +77,31 @@ class PresenceSimulator extends utils.Adapter {
             // The state was deleted
             this.log.info(`state ${id} deleted`);
         }
+    }
+
+    /**
+     * Is called to initialize objects
+     */
+    async initializeObjects() {
+        this.log.debug('[initializeObjects] started');
+
+        // Create adapter objects
+        await this.setObjectAsync('activated', {
+            type: 'state',
+            common: {
+                name: 'Presence simulator status',
+                type: 'boolean',
+                role: 'indicator',
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
+
+        // Subscribe to all state changes inside the adapters namespace
+        this.subscribeStates('*');
+
+		this.log.debug('[initializeObjects] finished');
     }
     
 }
