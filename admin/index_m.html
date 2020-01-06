@@ -20,6 +20,11 @@
     <script type="text/javascript">
         // This will be called by the admin adapter when the settings page loads
         function load(settings, onChange) {
+            // Hide Settings
+			console.log("Loading settings");
+			$('.hideOnLoad').hide();
+            $('.showOnLoad').show();
+            
             // example: select elements with id=key and class=value and insert value
             if (!settings) return;
             $('.value').each(function () {
@@ -41,6 +46,63 @@
             onChange(false);
             // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
             if (M) M.updateTextFields();
+
+            //Get Subsettings
+			schedules = settings.schedules || [];
+
+            //Set initial values of further variables
+            statesSelectedSchedule = -1;
+
+            //++++++++++ TABS ++++++++++
+            //Enhance Tabs with onShow-Function
+            $('ul.tabs li a').on('click', function(){ onTabShow($(this).attr('href'));});
+            function onTabShow(tabId){
+                switch(tabId){
+                    case "#tabSchedules":
+                        //Fill Table
+                        values2table('tableSchedules', schedules, onChange);
+                        break;
+                    case "#tabStates":
+                        //Add Categories to Selectbox for Categories
+                        $('#statesSelectedSchedule').empty().append("<option disabled selected value>Select schedule</option>");
+                        schedules.forEach(function(element, index){
+                            $('#statesSelectedSchedule').append("<option value='" + index + "'>" + element.name + "</option>"); 
+                        });
+                        $('select').select();
+
+                        //Reset statesSelectedSchedule
+                        statesSelectedSchedule = -1;
+                        $('#divStates').hide();
+                        break;
+                    case "#tabResult":
+                        //Show resulting JSON
+                        $('#result').empty().html(JSON.stringify(schedules, null, 4));
+                        break;
+                }
+            }
+
+            //++++++++++ STATES ++++++++++
+            //Enhance statesSelectedSchedule-Selectbox with functions
+            $('#statesSelectedSchedule').on('change', function(){
+                statesSelectedSchedule = $('#statesSelectedSchedule').val();
+
+                if(statesSelectedSchedule > -1){
+                    //Fill Table
+                    if(!schedules[statesSelectedSchedule].states) {
+                        schedules[statesSelectedSchedule].states = [];
+                    }
+                    values2table('tableStates', schedules[statesSelectedSchedule].states, onChange);
+                    
+                    $('#divStates').show();
+                } else {
+                    $('#divStates').hide();
+                }
+            });
+
+            //Show Settings
+            console.log("Loading settings done");
+            $('.hideOnLoad').show();
+            $('.showOnLoad').hide();
         }
 
         // This will be called by the admin adapter when the user presses the save button
@@ -54,10 +116,23 @@
                 } else {
                     obj[$this.attr('id')] = $this.val();
                 }
-            });
+            });            
+
+            //Get edited subsettings
+			obj.schedules = schedules;
+
             callback(obj);
         }
     </script>
+
+    <style>
+        .sub-title {
+            margin-top: 2rem!important;
+            padding: 0.5rem;
+            background: #64b5f6;
+            color: white;
+        }
+    </style>
 
 </head>
 
@@ -71,7 +146,136 @@
             </div>
         </div>
 
-        <!-- Put your content here -->
+        <!-- ++++++++++ TABS ++++++++++ -->
+        <div class="col s12">
+            <ul class="tabs hideOnLoad" id="HomeHubTabs" style="display: none;">
+                <li class="tab col s2"><a href="#tabStart" class="translate active">Start</a></li>
+                <li class="tab col s2"><a href="#tabSchedules" class="translate">Schedules</a></li>
+                <li class="tab col s2"><a href="#tabStates" class="translate">States</a></li>
+                <li class="tab col s2"><a href="#tabResult" class="translate">Result</a></li>
+            </ul>
+        </div>
+
+        <!-- ++++++++++ TAB: Start ++++++++++ -->
+        <div id="tabStart" class="col s12 page">
+            <div class="row">
+                <div class="col s12">
+                    <h6 class="translate sub-title">Start</h6>
+                </div>
+            </div>
+            <div class="row showOnLoad">
+                <div class="col s12">
+                    <p>Loading settings...</p>
+                </div>
+            </div>
+            <div class="row hideOnLoad" style="display: none;">
+                <div class="col s12">
+                    <p>
+                        Start setting up your presence simulation by:
+                        <ol>
+                            <li>Creating schedules<br>
+                                Schedules are used for ...<br>
+                                <strong>Example:</strong> ...
+                            </li>
+                            <li>and states.<br>
+                                States are ...<br>
+                                <strong>Example:</strong> ...
+                            </li>
+                        </ol>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ++++++++++ TAB: Schedules ++++++++++ -->
+        <div id="tabSchedules" class="col s12 page">
+            <div class="row">
+                <div class="col s12">
+                    <h6 class="translate sub-title">Schedules</h6>
+                </div>
+            </div>
+            <div class="col s12" id="tableSchedules">
+                <div class="row">
+                    <div class="col s2 m1 l1 center">
+                        <button title="Add" class="table-button-add btn-floating waves-effect waves-light btn-small">
+                            <i class="material-icons">add</i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col s12 m12 l12">
+                    <table class="table-values" style="width: 90%;">
+                        <thead>
+                            <tr>
+                                <th data-name="name" class="translate">Name</th>
+                                <th data-name="earliest_start_time" data-type="time" class="translate">Earliest start time</th>
+                                <th data-name="latest_start_time" data-type="time" class="translate">Latest start time</th>
+                                <th data-name="activated" data-type="checkbox" class="translate">Activated</th>
+                                <th data-buttons="delete"></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ++++++++++ TAB: States ++++++++++ -->
+        <div id="tabStates" class="col s12 page">
+            <div class="row">
+                <div class="col s12">
+                    <h6 class="translate sub-title">Select schedule to edit</h6>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s10 m6 l4">
+                    <select class="value" id="statesSelectedSchedule"></select>
+                    <label for="statesSelectedSchedule" class="translate">Schedule to edit</label>
+                </div>
+            </div>
+            <div id="divStates">
+                <div class="row">
+                    <div class="col s12">
+                        <h6 class="translate sub-title">States</h6>
+                    </div>
+                </div>
+                <div class="col s12" id="tableStates">
+                    <div class="row">
+                        <div class="col s2 m1 l1 center">
+                            <button title="Add" class="table-button-add btn-floating waves-effect waves-light btn-small">
+                                <i class="material-icons">add</i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col s12 m12 l12">
+                        <table class="table-values" style="width: 90%;">
+                            <thead>
+                                <tr>
+                                    <th data-name="id" class="translate">ID</th>
+                                    <th data-name="state_start" class="translate">State start</th>
+                                    <th data-name="state_end" class="translate">State end</th>
+                                    <th data-name="working_time" data-type="number" class="translate">Working time</th>
+                                    <th data-name="probability" data-type="number" class="translate">Probability</th>
+                                    <th data-buttons="delete"></th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ++++++++++ TAB: Result ++++++++++ -->
+        <div id="tabResult" class="col s12 page">
+            <div class="row">
+                <div class="col s12">
+                    <h6 class="translate sub-title">Result</h6>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 m6">
+                    <pre id="result"></pre>
+                </div>
+            </div>
+        </div>
 
     </div>
 
