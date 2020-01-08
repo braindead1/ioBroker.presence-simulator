@@ -62,6 +62,18 @@ systemDictionary = {
         "pl": "Wynik",
         "zh-cn": "结果"
     },
+    "Add schedule": {
+        "en": "Add schedule",
+        "de": "Zeitplan hinzufügen",
+        "ru": "Добавить расписание",
+        "pt": "Adicionar agendamento",
+        "nl": "Schema toevoegen",
+        "fr": "Ajouter un horaire",
+        "it": "Aggiungi programma",
+        "es": "Agregar horario",
+        "pl": "Dodaj harmonogram",
+        "zh-cn": "新增时间表"
+    },
     "Name": {
         "en": "Name",
         "de": "Name",
@@ -110,18 +122,6 @@ systemDictionary = {
         "pl": "Aktywowany",
         "zh-cn": "活性"
     },
-    "Select schedule to edit": {
-        "en": "Select schedule to edit",
-        "de": "Wählen Sie den zu bearbeitenden Zeitplan",
-        "ru": "Выберите расписание для редактирования",
-        "pt": "Selecione a programação para editar",
-        "nl": "Selecteer schema om te bewerken",
-        "fr": "Sélectionnez le calendrier à modifier",
-        "it": "Seleziona il programma da modificare",
-        "es": "Seleccionar horario para editar",
-        "pl": "Wybierz harmonogram do edycji",
-        "zh-cn": "选择时间表进行编辑"
-    },
     "Schedule to edit": {
         "en": "Schedule to edit",
         "de": "Zeitplan zum Bearbeiten",
@@ -133,6 +133,18 @@ systemDictionary = {
         "es": "Programar para editar",
         "pl": "Zaplanuj edycję",
         "zh-cn": "安排编辑"
+    },
+    "Add state": {
+        "en": "Add state",
+        "de": "Zustand hinzufügen",
+        "ru": "Добавить штат",
+        "pt": "Adicionar estado",
+        "nl": "Staat toevoegen",
+        "fr": "Ajouter un état",
+        "it": "Aggiungi stato",
+        "es": "Agregar estado",
+        "pl": "Dodaj stan",
+        "zh-cn": "添加状态"
     },
     "ID": {
         "en": "ID",

@@ -140,29 +140,25 @@
 
     <div class="m adapter-container">
 
-        <div class="row">
-            <div class="col s12 m4 l2">
-                <img src="presence-simulator.png" class="logo">
-            </div>
-        </div>
-
         <!-- ++++++++++ TABS ++++++++++ -->
-        <div class="col s12">
-            <ul class="tabs hideOnLoad" id="HomeHubTabs" style="display: none;">
-                <li class="tab col s2"><a href="#tabStart" class="translate active">Start</a></li>
-                <li class="tab col s2"><a href="#tabSchedules" class="translate">Schedules</a></li>
-                <li class="tab col s2"><a href="#tabStates" class="translate">States</a></li>
-                <li class="tab col s2"><a href="#tabResult" class="translate">Result</a></li>
-            </ul>
+        <div class="row">
+            <div class="col s12">
+                <ul class="tabs hideOnLoad" id="tabs" style="display: none;">
+                    <li class="tab col s2"><a href="#tabStart" class="translate active">Start</a></li>
+                    <li class="tab col s2"><a href="#tabSchedules" class="translate">Schedules</a></li>
+                    <li class="tab col s2"><a href="#tabStates" class="translate">States</a></li>
+                    <li class="tab col s2"><a href="#tabResult" class="translate">Result</a></li>
+                </ul>
+            </div>
         </div>
 
         <!-- ++++++++++ TAB: Start ++++++++++ -->
-        <div id="tabStart" class="col s12 page">
+        <div id="tabStart" class="page">
             <div class="row">
-                <div class="col s12">
-                    <h6 class="translate sub-title">Start</h6>
+                <div class="col s12 m4 l2">
+                    <img src="presence-simulator.png" class="logo">
                 </div>
-            </div>
+            </div>    
             <div class="row showOnLoad">
                 <div class="col s12">
                     <p>Loading settings...</p>
@@ -170,7 +166,7 @@
             </div>
             <div class="row hideOnLoad" style="display: none;">
                 <div class="col s12">
-                    <p>
+                    <p style="margin-top: 0px;">
                         Start setting up your presence simulation by:
                         <ol>
                             <li>Creating schedules<br>
@@ -182,78 +178,28 @@
                                 <strong>Example:</strong> ...
                             </li>
                         </ol>
-                    </p>
+                    </p style="margin-top: 0px;">
                 </div>
             </div>
         </div>
 
         <!-- ++++++++++ TAB: Schedules ++++++++++ -->
-        <div id="tabSchedules" class="col s12 page">
-            <div class="row">
-                <div class="col s12">
-                    <h6 class="translate sub-title">Schedules</h6>
-                </div>
-            </div>
-            <div class="col s12" id="tableSchedules">
+        <div id="tabSchedules" class="page">
+            <div id="tableSchedules">
                 <div class="row">
-                    <div class="col s2 m1 l1 center">
-                        <button title="Add" class="table-button-add btn-floating waves-effect waves-light btn-small">
-                            <i class="material-icons">add</i>
-                        </button>
+                    <div class="col s12 left">
+                        <a class="table-button-add waves-effect waves-light btn"><i class="material-icons left">add</i><span class="translate">Add schedule</span></a>
                     </div>
                 </div>
-                <div class="col s12 m12 l12">
-                    <table class="table-values" style="width: 90%;">
-                        <thead>
-                            <tr>
-                                <th data-name="name" class="translate">Name</th>
-                                <th data-name="earliest_start_time" data-type="time" class="translate">Earliest start time</th>
-                                <th data-name="latest_start_time" data-type="time" class="translate">Latest start time</th>
-                                <th data-name="activated" data-type="checkbox" class="translate">Activated</th>
-                                <th data-buttons="delete"></th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- ++++++++++ TAB: States ++++++++++ -->
-        <div id="tabStates" class="col s12 page">
-            <div class="row">
-                <div class="col s12">
-                    <h6 class="translate sub-title">Select schedule to edit</h6>
-                </div>
-            </div>
-            <div class="row">
-                <div class="input-field col s10 m6 l4">
-                    <select class="value" id="statesSelectedSchedule"></select>
-                    <label for="statesSelectedSchedule" class="translate">Schedule to edit</label>
-                </div>
-            </div>
-            <div id="divStates">
                 <div class="row">
                     <div class="col s12">
-                        <h6 class="translate sub-title">States</h6>
-                    </div>
-                </div>
-                <div class="col s12" id="tableStates">
-                    <div class="row">
-                        <div class="col s2 m1 l1 center">
-                            <button title="Add" class="table-button-add btn-floating waves-effect waves-light btn-small">
-                                <i class="material-icons">add</i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="col s12 m12 l12">
-                        <table class="table-values" style="width: 90%;">
+                        <table class="table-values">
                             <thead>
                                 <tr>
-                                    <th data-name="id" class="translate">ID</th>
-                                    <th data-name="state_start" class="translate">State start</th>
-                                    <th data-name="state_end" class="translate">State end</th>
-                                    <th data-name="working_time" data-type="number" class="translate">Working time</th>
-                                    <th data-name="probability" data-type="number" class="translate">Probability</th>
+                                    <th data-name="name" class="translate">Name</th>
+                                    <th data-name="earliest_start_time" data-type="time" class="translate">Earliest start time</th>
+                                    <th data-name="latest_start_time" data-type="time" class="translate">Latest start time</th>
+                                    <th data-name="activated" data-type="checkbox" class="translate">Activated</th>
                                     <th data-buttons="delete"></th>
                                 </tr>
                             </thead>
@@ -263,16 +209,46 @@
             </div>
         </div>
 
-        <!-- ++++++++++ TAB: Result ++++++++++ -->
-        <div id="tabResult" class="col s12 page">
+        <!-- ++++++++++ TAB: States ++++++++++ -->
+        <div id="tabStates" class="page">
             <div class="row">
-                <div class="col s12">
-                    <h6 class="translate sub-title">Result</h6>
+                <div class="input-field col s12 m6 l4">
+                    <select class="value" id="statesSelectedSchedule"></select>
+                    <label for="statesSelectedSchedule" class="translate">Schedule to edit</label>
                 </div>
             </div>
+            <div id="divStates">
+                <div id="tableStates">
+                    <div class="row">
+                        <div class="col s12 left">
+                            <a class="table-button-add waves-effect waves-light btn"><i class="material-icons left">add</i><span class="translate">Add state</span></a>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s12">
+                            <table class="table-values">
+                                <thead>
+                                    <tr>
+                                        <th data-name="id" class="translate">ID</th>
+                                        <th data-name="state_start" class="translate">State start</th>
+                                        <th data-name="state_end" class="translate">State end</th>
+                                        <th data-name="working_time" data-type="number" class="translate">Working time</th>
+                                        <th data-name="probability" data-type="number" class="translate">Probability</th>
+                                        <th data-buttons="delete"></th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ++++++++++ TAB: Result ++++++++++ -->
+        <div id="tabResult" class="page">
             <div class="row">
-                <div class="col s12 m6">
-                    <pre id="result"></pre>
+                <div class="col s12">
+                    <pre id="result" style="margin-top: 0px;"></pre>
                 </div>
             </div>
         </div>
