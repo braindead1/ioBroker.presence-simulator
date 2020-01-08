@@ -3,14 +3,19 @@
 <head>
 
     <!-- Load ioBroker scripts and styles-->
-    <link rel="stylesheet" type="text/css" href="../../css/adapter.css" />
+    <link rel="stylesheet" type="text/css" href="../../lib/css/fancytree/ui.fancytree.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
     <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
 
     <script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
 
-    <script type="text/javascript" src="../../js/translate.js"></script>
     <script type="text/javascript" src="../../lib/js/materialize.js"></script>
+    <script type="text/javascript" src="../../lib/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../../lib/js/jquery.fancytree-all.min.js"></script>
+
+    <script type="text/javascript" src="../../js/translate.js"></script>
+    <script type="text/javascript" src="../../lib/js/selectID.js"></script>
     <script type="text/javascript" src="../../js/adapter-settings.js"></script>
 
     <!-- Load our own files -->
@@ -18,6 +23,8 @@
     <script type="text/javascript" src="words.js"></script>
 
     <script type="text/javascript">
+        var selectId;
+
         // This will be called by the admin adapter when the settings page loads
         function load(settings, onChange) {
             // Hide Settings
@@ -47,7 +54,7 @@
             // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
             if (M) M.updateTextFields();
 
-            //Get Subsettings
+            //Get schedules
 			schedules = settings.schedules || [];
 
             //Set initial values of further variables
@@ -91,7 +98,7 @@
                     if(!schedules[statesSelectedSchedule].states) {
                         schedules[statesSelectedSchedule].states = [];
                     }
-                    values2table('tableStates', schedules[statesSelectedSchedule].states, onChange);
+                    values2table('tableStates', schedules[statesSelectedSchedule].states, onChange, tableOnReady);
                     
                     $('#divStates').show();
                 } else {
@@ -99,10 +106,60 @@
                 }
             });
 
+            function tableOnReady() {
+                $('#tableStates .table-values .values-buttons[data-command="select_id"]').on('click', function () {
+                    let id = $(this).data('index');
+                    initSelectId(function (selectId) {
+                        selectId.selectId('show', $('#tableStates .values-input[data-name="id"][data-index="' + id + '"]').val(), function (newId) {
+                            if (newId) {
+                                $('#tableStates .values-input[data-name="id"][data-index="' + id + '"]').val(newId).trigger('change');
+                            }
+                        });
+                    });
+                });
+            }
+
             //Show Settings
             console.log("Loading settings done");
             $('.hideOnLoad').show();
             $('.showOnLoad').hide();
+        }
+
+        // This will be called to select IDs
+        function initSelectId(callback) {
+            if (selectId) {
+                return callback(selectId);
+            }
+            socket.emit('getObjects', function (err, objs) {
+                selectId = $('#dialog-select-member').selectId('init',  {
+                    noMultiselect: true,
+                    objects: objs,
+                    imgPath:       '../../lib/css/fancytree/',
+                    filter:        {type: 'state'},
+                    name:          'scenes-select-state',
+                    texts: {
+                        select:          _('Select'),
+                        cancel:          _('Cancel'),
+                        all:             _('All'),
+                        id:              _('ID'),
+                        name:            _('Name'),
+                        role:            _('Role'),
+                        room:            _('Room'),
+                        value:           _('Value'),
+                        selectid:        _('Select ID'),
+                        from:            _('From'),
+                        lc:              _('Last changed'),
+                        ts:              _('Time stamp'),
+                        wait:            _('Processing...'),
+                        ack:             _('Acknowledged'),
+                        selectAll:       _('Select all'),
+                        unselectAll:     _('Deselect all'),
+                        invertSelection: _('Invert selection')
+                    },
+                    columns: ['image', 'name', 'role', 'room']
+                });
+                callback(selectId);
+            });
         }
 
         // This will be called by the admin adapter when the user presses the save button
@@ -125,21 +182,11 @@
         }
     </script>
 
-    <style>
-        .sub-title {
-            margin-top: 2rem!important;
-            padding: 0.5rem;
-            background: #64b5f6;
-            color: white;
-        }
-    </style>
-
 </head>
 
 <body>
 
     <div class="m adapter-container">
-
         <!-- ++++++++++ TABS ++++++++++ -->
         <div class="row">
             <div class="col s12">
@@ -230,6 +277,7 @@
                                 <thead>
                                     <tr>
                                         <th data-name="id" class="translate">ID</th>
+                                        <th data-buttons="select_id"></th>
                                         <th data-name="state_start" class="translate">State start</th>
                                         <th data-name="state_end" class="translate">State end</th>
                                         <th data-name="working_time" data-type="number" class="translate">Working time</th>
@@ -252,7 +300,24 @@
                 </div>
             </div>
         </div>
+    </div>
 
+    <div class="m material-dialogs">
+        <div id="dialog-select-member" class="modal modal-fixed-footer">
+            <div class="modal-content">
+                <div class="row">
+                    <div class="col s12 title"></div>
+                </div>
+                <div class="row">
+                    <div class="col s12 dialog-content">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="modal-action modal-close waves-effect waves-green btn btn-set"><i class="large material-icons left">check</i><span class="translate">Select</span></a>
+                <a class="modal-action modal-close waves-effect waves-green btn btn-close"><i class="large material-icons left ">close</i><span class="translate">Cancel</span></a>
+            </div>
+        </div>
     </div>
 
 </body>

@@ -205,5 +205,29 @@ systemDictionary = {
         "es": "Probabilidad",
         "pl": "Prawdopodobieństwo",
         "zh-cn": "可能性"
+    },
+    "Select": {
+        "en": "Select",
+        "de": "Auswählen",
+        "ru": "Выбрать",
+        "pt": "Selecione",
+        "nl": "kiezen",
+        "fr": "Sélectionner",
+        "it": "Selezionare",
+        "es": "Seleccione",
+        "pl": "Wybierz",
+        "zh-cn": "选择"
+    },
+    "Cancel": {
+        "en": "Cancel",
+        "de": "Abbrechen",
+        "ru": "Отмена",
+        "pt": "Cancelar",
+        "nl": "annuleren",
+        "fr": "Annuler",
+        "it": "Annulla",
+        "es": "Cancelar",
+        "pl": "Anuluj",
+        "zh-cn": "取消"
     }
 };
