@@ -1,9 +1,15 @@
+var schedules = [];
 var selectId;
 
-// This will be called by the admin adapter when the settings page loads
+/**
+ * Is called by the admin adapter when the settings page loads
+ * @param {*} settings 
+ * @param {*} onChange 
+ */
 function load(settings, onChange) {
-    // Hide Settings
     console.log("Loading settings");
+    
+    // Hide Settings
     $('.hideOnLoad').hide();
     $('.showOnLoad').show();
     
@@ -25,20 +31,56 @@ function load(settings, onChange) {
                 ;
         }
     });
+
+    // Get schedules
+    schedules = settings.schedules || [];
+
+    // Enhance GUI with events
+    createEvents(onChange);
+
     onChange(false);
+
     // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
     if (M) M.updateTextFields();
 
-    //Get schedules
-    schedules = settings.schedules || [];
+    //Show Settings
+    $('.hideOnLoad').show();
+    $('.showOnLoad').hide();
 
-    //Set initial values of further variables
-    statesSelectedSchedule = -1;
+    console.log("Loading settings done");
+}
 
-    //++++++++++ TABS ++++++++++
-    //Enhance Tabs with onShow-Function
-    $('ul.tabs li a').on('click', function(){ onTabShow($(this).attr('href'));});
-    function onTabShow(tabId){
+/**
+ * Is called by the admin adapter when the user presses the save button
+ * @param {*} callback 
+ */
+function save(callback) {
+    // example: select elements with class=value and build settings object
+    var obj = {};
+    $('.value').each(function () {
+        var $this = $(this);
+        if ($this.attr('type') === 'checkbox') {
+            obj[$this.attr('id')] = $this.prop('checked');
+        } else {
+            obj[$this.attr('id')] = $this.val();
+        }
+    });            
+
+    //Get edited subsettings
+    obj.schedules = schedules;
+
+    callback(obj);
+}
+
+/**
+ * Is called to enhance GUI with events
+ * @param {*} onChange 
+ */
+function createEvents(onChange) {
+    // Enhance Tabs with onClick event
+    $('ul.tabs li a').on('click', function(){ 
+        let tabId = $(this).attr('href');
+
         switch(tabId){
             case "#tabSchedules":
                 //Fill Table
@@ -61,10 +103,9 @@ function load(settings, onChange) {
                 $('#result').empty().html(JSON.stringify(schedules, null, 4));
                 break;
         }
-    }
+    });
 
-    //++++++++++ STATES ++++++++++
-    //Enhance statesSelectedSchedule-Selectbox with functions
+    // Enhance statesSelectedSchedule-Selectbox on States tab with onChange event
     $('#statesSelectedSchedule').on('change', function(){
         statesSelectedSchedule = $('#statesSelectedSchedule').val();
 
@@ -80,27 +121,28 @@ function load(settings, onChange) {
             $('#divStates').hide();
         }
     });
-
-    function tableOnReady() {
-        $('#tableStates .table-values .values-buttons[data-command="select_id"]').on('click', function () {
-            let id = $(this).data('index');
-            initSelectId(function (selectId) {
-                selectId.selectId('show', $('#tableStates .values-input[data-name="id"][data-index="' + id + '"]').val(), function (newId) {
-                    if (newId) {
-                        $('#tableStates .values-input[data-name="id"][data-index="' + id + '"]').val(newId).trigger('change');
-                    }
-                });
-            });
-        });
-    }
-
-    //Show Settings
-    console.log("Loading settings done");
-    $('.hideOnLoad').show();
-    $('.showOnLoad').hide();
 }
 
-// This will be called to select IDs
+/**
+ * Is called when tableStates table is ready to enhance SelectID buttons with onClick event
+ */
+function tableOnReady() {
+    $('#tableStates .table-values .values-buttons[data-command="select_id"]').on('click', function () {
+        let id = $(this).data('index');
+        initSelectId(function (selectId) {
+            selectId.selectId('show', $('#tableStates .values-input[data-name="id"][data-index="' + id + '"]').val(), function (newId) {
+                if (newId) {
+                    $('#tableStates .values-input[data-name="id"][data-index="' + id + '"]').val(newId).trigger('change');
+                }
+            });
+        });
+    });
+}
+
+/**
+ * Is called to select IDs
+ * @param {*} callback 
+ */
 function initSelectId(callback) {
     if (selectId) {
         return callback(selectId);
@@ -135,23 +177,4 @@ function initSelectId(callback) {
         });
         callback(selectId);
     });
-}
-
-// This will be called by the admin adapter when the user presses the save button
-function save(callback) {
-    // example: select elements with class=value and build settings object
-    var obj = {};
-    $('.value').each(function () {
-        var $this = $(this);
-        if ($this.attr('type') === 'checkbox') {
-            obj[$this.attr('id')] = $this.prop('checked');
-        } else {
-            obj[$this.attr('id')] = $this.val();
-        }
-    });            
-
-    //Get edited subsettings
-    obj.schedules = schedules;
-
-    callback(obj);
 }
