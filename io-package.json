@@ -59,24 +59,6 @@
         "type": "alarm",
         "compact": true,
         "materialize": true,
-        "materializeTab": true,
-        "adminTab": {
-            "singleton": true,
-            "name": {
-                "en": "Presence Simulator",
-                "de": "Anwesenheitssimulator",
-                "ru": "Симулятор присутствия",
-                "pt": "Simulador de presença",
-                "nl": "Aanwezigheidssimulator",
-                "fr": "Simulateur de présence",
-                "it": "Simulatore di presenza",
-                "es": "Simulador de presencia",
-                "pl": "Symulator obecności",
-                "zh-cn": "现场模拟器"
-            },
-            "link": "",
-            "fa-icon": "info"
-        },
         "supportCustoms": true,
         "dependencies": [
             {
