@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "Anwesenheitssimulation",
   "author": {
-    "name": "braindead1"
+    "name": "braindead1",
+    "email": "os.braindead1@gmail.com"
   },
   "homepage": "https://github.com/braindead1/ioBroker.presence-simulator",
   "license": "MIT",

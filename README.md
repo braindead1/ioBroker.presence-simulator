@@ -22,7 +22,7 @@ home. It is possible to schedule tasks to switch on lights or start the TV.
 ## License
 MIT License
 
-Copyright (c) 2019 braindead1
+Copyright (c) 2020 braindead1 <os.braindead1@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
