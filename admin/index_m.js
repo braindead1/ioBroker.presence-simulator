@@ -1,5 +1,5 @@
-var schedules = [];
-var selectId;
+let schedules = [];
+let selectId;
 
 /**
  * Is called by the admin adapter when the settings page loads
@@ -7,7 +7,7 @@ var selectId;
  * @param {*} onChange 
  */
 function load(settings, onChange) {
-    console.log("Loading settings");
+    console.log('Loading settings');
     
     // Hide Settings
     $('.hideOnLoad').hide();
@@ -16,19 +16,19 @@ function load(settings, onChange) {
     // example: select elements with id=key and class=value and insert value
     if (!settings) return;
     $('.value').each(function () {
-        var $key = $(this);
-        var id = $key.attr('id');
+        const $key = $(this);
+        const id = $key.attr('id');
         if ($key.attr('type') === 'checkbox') {
             // do not call onChange direct, because onChange could expect some arguments
             $key.prop('checked', settings[id])
                 .on('change', () => onChange())
-                ;
+            ;
         } else {
             // do not call onChange direct, because onChange could expect some arguments
             $key.val(settings[id])
                 .on('change', () => onChange())
                 .on('keyup', () => onChange())
-                ;
+            ;
         }
     });
 
@@ -47,7 +47,7 @@ function load(settings, onChange) {
     $('.hideOnLoad').show();
     $('.showOnLoad').hide();
 
-    console.log("Loading settings done");
+    console.log('Loading settings done');
 }
 
 /**
@@ -56,9 +56,9 @@ function load(settings, onChange) {
  */
 function save(callback) {
     // example: select elements with class=value and build settings object
-    var obj = {};
+    const obj = {};
     $('.value').each(function () {
-        var $this = $(this);
+        const $this = $(this);
         if ($this.attr('type') === 'checkbox') {
             obj[$this.attr('id')] = $this.prop('checked');
         } else {
@@ -79,18 +79,18 @@ function save(callback) {
 function createEvents(onChange) {
     // Enhance Tabs with onClick event
     $('ul.tabs li a').on('click', function(){ 
-        let tabId = $(this).attr('href');
+        const tabId = $(this).attr('href');
 
         switch(tabId){
-            case "#tabSchedules":
+            case '#tabSchedules':
                 //Fill Table
                 values2table('tableSchedules', schedules, onChange);
                 break;
-            case "#tabStates":
+            case '#tabStates':
                 //Add Categories to Selectbox for Categories
-                $('#statesSelectedSchedule').empty().append("<option disabled selected value>Select schedule</option>");
+                $('#statesSelectedSchedule').empty().append('<option disabled selected value>Select schedule</option>');
                 schedules.forEach(function(element, index){
-                    $('#statesSelectedSchedule').append("<option value='" + index + "'>" + element.name + "</option>"); 
+                    $('#statesSelectedSchedule').append('<option value=\'' + index + '\'>' + element.name + '</option>'); 
                 });
                 $('select').select();
 
@@ -98,7 +98,7 @@ function createEvents(onChange) {
                 statesSelectedSchedule = -1;
                 $('#divStates').hide();
                 break;
-            case "#tabResult":
+            case '#tabResult':
                 //Show resulting JSON
                 $('#result').empty().html(JSON.stringify(schedules, null, 4));
                 break;
@@ -128,7 +128,7 @@ function createEvents(onChange) {
  */
 function tableOnReady() {
     $('#tableStates .table-values .values-buttons[data-command="select_id"]').on('click', function () {
-        let id = $(this).data('index');
+        const id = $(this).data('index');
         initSelectId(function (selectId) {
             selectId.selectId('show', $('#tableStates .values-input[data-name="id"][data-index="' + id + '"]').val(), function (newId) {
                 if (newId) {
@@ -144,37 +144,38 @@ function tableOnReady() {
  * @param {*} callback 
  */
 function initSelectId(callback) {
-    if (selectId) {
-        return callback(selectId);
-    }
-    socket.emit('getObjects', function (err, objs) {
-        selectId = $('#dialog-select-member').selectId('init',  {
-            noMultiselect: true,
-            objects: objs,
-            imgPath:       '../../lib/css/fancytree/',
-            filter:        {type: 'state'},
-            name:          'scenes-select-state',
-            texts: {
-                select:          _('Select'),
-                cancel:          _('Cancel'),
-                all:             _('All'),
-                id:              _('ID'),
-                name:            _('Name'),
-                role:            _('Role'),
-                room:            _('Room'),
-                value:           _('Value'),
-                selectid:        _('Select ID'),
-                from:            _('From'),
-                lc:              _('Last changed'),
-                ts:              _('Time stamp'),
-                wait:            _('Processing...'),
-                ack:             _('Acknowledged'),
-                selectAll:       _('Select all'),
-                unselectAll:     _('Deselect all'),
-                invertSelection: _('Invert selection')
-            },
-            columns: ['image', 'name', 'role', 'room']
-        });
-        callback(selectId);
+    if (selectId) return callback ? callback(selectId) : selectId;
+    
+    socket.emit('getObjects', function (err, res) {
+        if (!err && res) {
+            selectId = $('#dialog-select-member').selectId('init',  {
+                noMultiselect: true,
+                objects: res,
+                imgPath:       '../../lib/css/fancytree/',
+                filter:        {type: 'state'},
+                name:          'vcard-select-state',
+                texts: {
+                    select:          _('Select'),
+                    cancel:          _('Cancel'),
+                    all:             _('All'),
+                    id:              _('ID'),
+                    name:            _('Name'),
+                    role:            _('Role'),
+                    room:            _('Room'),
+                    value:           _('Value'),
+                    selectid:        _('Select ID'),
+                    from:            _('From'),
+                    lc:              _('Last changed'),
+                    ts:              _('Time stamp'),
+                    wait:            _('Processing...'),
+                    ack:             _('Acknowledged'),
+                    selectAll:       _('Select all'),
+                    unselectAll:     _('Deselect all'),
+                    invertSelection: _('Invert selection')
+                },
+                columns: ['image', 'name', 'role', 'room']
+            });
+            callback && callback(selectId);
+        }
     });
 }
