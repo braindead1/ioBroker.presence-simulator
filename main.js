@@ -40,7 +40,7 @@ class PresenceSimulator extends utils.Adapter {
 
         // Check the status of the presence simulator
         let activated = await this.getStateAsync('activated');
-        if(activated.val === true) {
+        if(activated && activated.val === true) {
             this.activated = true;
         }
 
