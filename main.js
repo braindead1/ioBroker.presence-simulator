@@ -39,7 +39,7 @@ class PresenceSimulator extends utils.Adapter {
         await this.initializeObjects();
 
         // Check the status of the presence simulator
-        let activated = await this.getStateAsync('activated');
+        const activated = await this.getStateAsync('activated');
         if(activated && activated.val === true) {
             this.activated = true;
         }
@@ -124,7 +124,7 @@ class PresenceSimulator extends utils.Adapter {
         // Subscribe to all state changes inside the adapters namespace
         this.subscribeStates('*');
 
-		this.log.debug('[initializeObjects] finished');
+        this.log.debug('[initializeObjects] finished');
     }
     
     /**
@@ -136,9 +136,9 @@ class PresenceSimulator extends utils.Adapter {
         // Setup schedules
         this.log.info('[activatePresenceSimulation] Setup schedules');
 
-        var index;
-        var schedule;
-        var cron;
+        let index;
+        let schedule;
+        let startTime;
         for (index = 0; index < this.config.schedules.length; ++index) {
             schedule = this.config.schedules[index];
 
@@ -146,18 +146,18 @@ class PresenceSimulator extends utils.Adapter {
                 this.log.debug('[activatePresenceSimulation] valid schedule found');
 
                 // Start time
-                cron = this.calculateCron(schedule.earliest_start_time, schedule.latest_start_time);
+                startTime = this.calculateStartTime(schedule.earliest_start_time, schedule.latest_start_time);
 
                 // Add schedule for start time
                 this.schedules.push(
-                    nodeSchedule.scheduleJob(cron, function(){
-                        this.log.info("Scheduled job '" + schedule.name + "' done");
+                    nodeSchedule.scheduleJob(startTime, function(){
+                        this.log.info('Scheduled job \'' + schedule.name + '\' done');
                     }.bind(this))
                 );
 
-                this.log.info("Job '" + schedule.name + "' scheduled for " + cron);
+                this.log.info('Job \'' + schedule.name + '\' scheduled for ' + cron);
             }
-        }        
+        }
 
         this.log.debug('[activatePresenceSimulation] finished');
     }
@@ -171,7 +171,7 @@ class PresenceSimulator extends utils.Adapter {
         // Delete schedules
         this.log.info('[deactivatePresenceSimulation] Delete schedules');
 
-        var index;
+        let index;
         for (index = 0; index < this.schedules.length; ++index) {
             this.schedules[index].cancel();
         }
@@ -185,8 +185,8 @@ class PresenceSimulator extends utils.Adapter {
      */
     isValidSchedule(schedule) {
         if (schedule.earliest_start_time !== '' && schedule.activated === true) {
-            var index;
-            var state;
+            let index;
+            let state;
             for (index = 0; index < schedule.states.length; ++index) {
                 state = schedule.states[index];
 
@@ -200,42 +200,40 @@ class PresenceSimulator extends utils.Adapter {
     }
 
     /**
-     * 
+     * Is used to calculate the start time of a schedule
      * @param {string} earliestStartTime 
      * @param {string} latestStartTime 
      */
-    calculateCron(earliestStartTime, latestStartTime) {
-        var retVal;
+    calculateStartTime(earliestStartTime, latestStartTime) {
+        let retVal;
 
-        if (latestStartTime === "") {
+        if (latestStartTime === '') {
             // Start at fixed time
-            retVal = this.convertTimeToCron(earliestStartTime);
+            const earliestTime = earliestStartTime.split(':');
+
+            retVal = {
+                hour: earliestTime[0],
+                minute: earliestTime[1]
+            };
         } else {
             // Calculate start time
-            var earliestTime = earliestStartTime.split(':');
-            var latestTime = latestStartTime.split(':');
-            var diffMinutes = (parseInt(latestTime[0]) * 60 + parseInt(latestTime[1])) - (parseInt(earliestTime[0]) * 60 + parseInt(earliestTime[1]));
-            var randomMinutes = Math.floor(Math.random() * (diffMinutes - 0 + 1)) + 0;
+            const earliestTime = earliestStartTime.split(':');
+            const latestTime = latestStartTime.split(':');
+            const diffMinutes = (parseInt(latestTime[0]) * 60 + parseInt(latestTime[1])) - (parseInt(earliestTime[0]) * 60 + parseInt(earliestTime[1]));
+            const randomMinutes = Math.floor(Math.random() * (diffMinutes - 0 + 1)) + 0;
 
-            var startTime = [parseInt(earliestTime[0]), parseInt(earliestTime[1])];
+            const startTime = [parseInt(earliestTime[0]), parseInt(earliestTime[1])];
             startTime[0] = startTime[0] + Math.floor(randomMinutes / 60);
             startTime[1] = startTime[1] + (randomMinutes % 60);
-            retVal = this.convertTimeToCron(startTime[0] + ':' + startTime[1]);
+
+            retVal = {
+                hour: startTime[0],
+                minute: startTime[1]
+            };
         }
 
         return retVal;
     }
-
-    /**
-     * Is used to convert a time into a cron string
-     * @param {string} time 
-     */
-    convertTimeToCron(time) {
-        var retVal = time.split(':');
-
-        return retVal[1] + ' ' + retVal[0] + ' * * *';
-    }
-    
 }
 
 // @ts-ignore parent is a valid property on module
