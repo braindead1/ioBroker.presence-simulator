@@ -29,10 +29,11 @@ class PresenceSimulator extends utils.Adapter {
 
         this.activated = false;
         this.schedules = [];
+        this.timeouts = [];
     }
 
     /**
-     * Is called when databases are connected and adapter received configuration.
+     * Is called when adapter received configuration.
      */
     async onReady() {
         // Initialize your adapter here
@@ -150,12 +151,35 @@ class PresenceSimulator extends utils.Adapter {
 
                 // Add schedule for start time
                 this.schedules.push(
-                    nodeSchedule.scheduleJob(startTime, function(){
-                        this.log.info('Scheduled job \'' + schedule.name + '\' done');
+                    nodeSchedule.scheduleJob(startTime, async function(){
+                        let index;
+                        let state;
+                        for (index = 0; index < schedule.states.length; ++index) {
+                            state = schedule.states[index];
+
+                            if (this.isProbable(state.probability) === true) {
+                                this.setForeignState(state.id, state.state_start);
+
+                                if (state.working_time !== '') {
+                                    if (state.state_end === '') {
+                                        const currentState = await this.getForeignStateAsync(state.id);
+                                        state.state_end = currentState.val;
+                                    }
+    
+                                    this.timeouts.push(
+                                        setTimeout(function(state) {
+                                            this.setForeignState(state.id, state.state_end);
+                                        }.bind(this, state), parseInt(state.working_time) * 1000)
+                                    );
+                                }
+                            }
+                        }
+
+                        this.log.info('Scheduled job \'' + schedule.name + '\' started');
                     }.bind(this))
                 );
 
-                this.log.info('Job \'' + schedule.name + '\' scheduled for ' + cron);
+                this.log.info('Job \'' + schedule.name + '\' scheduled for ' + startTime);
             }
         }
 
@@ -168,13 +192,17 @@ class PresenceSimulator extends utils.Adapter {
     async deactivatePresenceSimulation() {
         this.log.debug('[deactivatePresenceSimulation] started');
 
-        // Delete schedules
-        this.log.info('[deactivatePresenceSimulation] Delete schedules');
-
         let index;
         for (index = 0; index < this.schedules.length; ++index) {
             this.schedules[index].cancel();
         }
+
+        for (index = 0; index < this.timeouts.length; ++index) {
+            clearTimeout(this.timeouts[index]);
+        }
+        
+        // Delete schedules
+        this.log.info('[deactivatePresenceSimulation] Schedules deleted');
 
         this.log.debug('[deactivatePresenceSimulation] finished');
     }
@@ -233,6 +261,26 @@ class PresenceSimulator extends utils.Adapter {
         }
 
         return retVal;
+    }
+    
+    /**
+     * Calculate probability
+     * @param {*} probability 
+     */
+    isProbable(probability) {
+        let retVaL;
+
+        if (probability === 0) {
+            retVaL = false;
+        } else if (probability === 100) {
+            retVaL = true;
+        } else {
+            probability = probability / 100;
+
+            retVaL = Math.random() <= probability;
+        }
+
+        return retVaL;
     }
 }
 
